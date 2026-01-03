@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BEST CALCULATER</title>
+<title>Calculator</title>
+<style>
+body{
+  background:#ddd;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:Arial;
+}
+.calc{
+  background:#000;
+  color:#fff;
+  width:320px;
+  border-radius:25px;
+  padding:15px;
+  position:relative;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.icon{cursor:pointer;font-size:20px;}
+.split{
+  background:#e91e63;
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:12px;
+}
+.screen{
+  text-align:right;
+  margin:15px 0;
+}
+.expr{opacity:.7}
+.result{font-size:40px;font-weight:bold;}
+.buttons{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+button{
+  height:55px;
+  border:none;
+  border-radius:15px;
+  font-size:18px;
+}
+.gray{background:#333;color:#fff;}
+.orange{background:#f9a825;color:#fff;}
+.green{background:#2ecc71;color:#fff;}
+.red{background:#b23b3b;color:#fff;}
+.light{background:#444;color:#fff;}
+button:active{transform:scale(.95);}
+
+/* HISTORY */
+.history{
+  position:absolute;
+  inset:0;
+  background:#111;
+  border-radius:25px;
+  padding:15px;
+  display:none;
+}
+.history-box{
+  height:280px;
+  overflow-y:auto;
+  font-size:14px;
+}
+
+/* LOGIN */
+.login{
+  position:absolute;
+  inset:0;
+  background:#111;
+  border-radius:25px;
+  padding:20px;
+  display:none;
+}
+.login input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:10px;
+  border:none;
+}
+.login button{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  background:#2ecc71;
+  color:#fff;
+  border:none;
+}
+</style>
+</head>
+
+<body>
+<div class="calc">
+<h2 style="text-align:center;
+           margin:5px 0 10px;
+           font-size:20px;
+           letter-spacing:1px;
+           color:#2ecc71;">
+  BEST CALCULATER
+</h2>
+
+<!-- HISTORY PANEL -->
+<div class="history" id="historyPanel">
+  <div class="icon" onclick="toggleHistory()">❌</div>
+  <h3>History</h3>
+  <div class="history-box" id="historyBox"></div>
+</div>
+
+<!-- LOGIN PANEL -->
+<div class="login" id="loginPanel">
+  <div class="icon" onclick="toggleLogin()">❌</div>
+  <h3>Login</h3>
+  <input type="text" id="username" placeholder="Enter name">
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="top">
+  <div class="icon" onclick="toggleHistory()">☰</div>
+  <div class="split">SPLIT ↗</div>
+  <div class="icon" id="loginIcon" onclick="toggleLogin()">👤</div>
+</div>
+
+<div class="screen">
+  <div class="expr" id="exp"></div>
+  <div class="result" id="res">0</div>
+</div>
+
+<div class="buttons">
+  <button class="light">e</button>
+  <button class="light">sin</button>
+  <button class="light">cos</button>
+  <button class="light">deg</button>
+
+  <button class="red" onclick="clr()">C</button>
+  <button class="gray" onclick="add('(')">(</button>
+  <button class="gray" onclick="add(')')">)</button>
+  <button class="orange" onclick="add('+')">+</button>
+
+  <button class="gray" onclick="add('7')">7</button>
+  <button class="gray" onclick="add('8')">8</button>
+  <button class="gray" onclick="add('9')">9</button>
+  <button class="orange" onclick="add('-')">−</button>
+
+  <button class="gray" onclick="add('4')">4</button>
+  <button class="gray" onclick="add('5')">5</button>
+  <button class="gray" onclick="add('6')">6</button>
+  <button class="orange" onclick="add('*')">×</button>
+
+  <button class="gray" onclick="add('1')">1</button>
+  <button class="gray" onclick="add('2')">2</button>
+  <button class="gray" onclick="add('3')">3</button>
+  <button class="orange" onclick="add('/')">÷</button>
+
+  <button class="gray" onclick="add('.')">.</button>
+  <button class="gray" onclick="add('0')">0</button>
+  <button class="gray" onclick="del()">DEL</button>
+  <button class="green" onclick="calc()">=</button>
+</div>
+</div>
+
+<script>
+let exp=document.getElementById("exp");
+let res=document.getElementById("res");
+let historyBox=document.getElementById("historyBox");
+let loginIcon=document.getElementById("loginIcon");
+
+historyBox.innerHTML=localStorage.getItem("calcHistory")||"";
+
+let savedUser=localStorage.getItem("user");
+if(savedUser){
+ loginIcon.innerText="👤 "+savedUser;
+}
+
+function add(v){exp.innerText+=v;}
+function calc(){
+ try{
+  let r=eval(exp.innerText);
+  res.innerText=r;
+  let h=exp.innerText+" = "+r+"<br>";
+  historyBox.innerHTML+=h;
+  localStorage.setItem("calcHistory",historyBox.innerHTML);
+ }catch{res.innerText="Error";}
+}
+function clr(){exp.innerText="";res.innerText="0";}
+function del(){exp.innerText=exp.innerText.slice(0,-1);}
+
+function toggleHistory(){
+ let h=document.getElementById("historyPanel");
+ h.style.display=h.style.display=="block"?"none":"block";
+}
+function toggleLogin(){
+ let l=document.getElementById("loginPanel");
+ l.style.display=l.style.display=="block"?"none":"block";
+}
+function login(){
+ let u=document.getElementById("username").value;
+ if(u){
+  localStorage.setItem("user",u);
+  loginIcon.innerText="👤 "+u;
+  toggleLogin();
+ }
+}
+</script>
+</body>
+</html>
+<script>
+function googleLogin(){
+  let name="Google User";
+  let email="googleuser@gmail.com";
+  saveUser(name,email);
+}
+
+function gmailLogin(){
+  let name="Gmail User";
+  let email="gmailuser@gmail.com";
+  saveUser(name,email);
+}
+
+function manualLogin(){
+  let name=document.getElementById("username").value;
+  let email=document.getElementById("email").value;
+  if(name && email){
+    saveUser(name,email);
+  }
+}
+
+function saveUser(name,email){
+  localStorage.setItem("user",name);
+  localStorage.setItem("email",email);
+  loginIcon.innerText="👤 "+name;
+  toggleLogin();
+}
+</script>
